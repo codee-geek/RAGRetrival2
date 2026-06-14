@@ -1,15 +1,12 @@
 services:
   backend:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
-      target: runtime
+    image: ghcr.io/${GHCR_OWNER:-codee-geek}/rag-backend:latest
     container_name: rag-backend
     ports:
       - "8000:8000"
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+      CORS_ORIGINS: ${CORS_ORIGINS:-https://askus-ai.duckdns.org}
       PINECONE_API_KEY: ${PINECONE_API_KEY:-}
       PINECONE_INDEX_NAME: ${PINECONE_INDEX_NAME:-rag-chunks}
       PINECONE_CLOUD: ${PINECONE_CLOUD:-aws}
@@ -27,14 +24,10 @@ services:
       start_period: 120s
 
   frontend:
-    build:
-      context: .
-      dockerfile: frontend/Dockerfile
-      args:
-        REACT_APP_API_URL: ${REACT_APP_API_URL:-http://localhost:8000}
+    image: ghcr.io/${GHCR_OWNER:-codee-geek}/rag-frontend:latest
     container_name: rag-frontend
     ports:
-      - "3000:80"
+      - "80:80"
     depends_on:
       backend:
         condition: service_healthy
